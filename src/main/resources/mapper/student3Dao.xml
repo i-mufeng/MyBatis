@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    mapper是MyBatis映射文件的根标签
+        namespace：必须指定且必须唯一。代表命名空间。
+-->
+<mapper namespace="Student3">
+
+    <insert id="insertStudentWithPrimaryKey" parameterType="com.mufeng.entity.Student3" >
+        <selectKey resultType="string" keyColumn="id" keyProperty="id" order="BEFORE">
+            SELECT REPLACE(UUID(),'-','')
+        </selectKey>
+        INSERT INTO student3(id, name, mobile)
+        VALUES (#{id}, #{name}, #{mobile});
+    </insert>
+</mapper>

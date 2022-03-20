@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    mapper是MyBatis映射文件的根标签
+        namespace：必须指定且必须唯一。代表命名空间。
+-->
+<mapper namespace="Student2">
+    <!--
+        id：该命名空间下的唯一标识
+        resultType：在没有设置别名的情况下，写全限定名
+        #{} 代表取值   在针对只有一个参数的情况下，该取值没有限定，但建议与其他地方一致
+    -->
+    <select id="queryById" resultType="com.mufeng.entity.Student2">
+        SELECT *
+        FROM student2
+        WHERE id = #{id};
+    </select>
+
+    <select id="queryAll" resultType="com.mufeng.entity.Student2">
+        SELECT *
+        FROM student2;
+    </select>
+
+    <select id="queryByIdRange" resultType="com.mufeng.entity.Student2" parameterType="map">
+        SELECT *
+        FROM student2
+        WHERE id BETWEEN #{fi} AND #{la};
+    </select>
+
+    <select id="queryByMultiParam" resultType="com.mufeng.entity.Student2" parameterType="map">
+        SELECT *
+        FROM student2
+        WHERE id = #{id}
+          AND name = #{name};
+    </select>
+
+    <select id="queryByMultiParam2" resultType="map" parameterType="map">
+        SELECT * FROM student2 WHERE id=#{id} AND name=#{name}
+    </select>
+
+
+
+    <select id="queryByMultiParam3" resultType="java.util.LinkedHashMap" parameterType="map">
+        SELECT *
+        FROM student2
+        WHERE id = #{id}
+          AND name = #{name};
+    </select>
+
+    <select id="insertStudent" parameterType="com.mufeng.entity.Student2">
+        INSERT INTO student2
+        VALUES (#{id}, #{name}, #{mobile}, #{createTime});
+    </select>
+
+
+</mapper>

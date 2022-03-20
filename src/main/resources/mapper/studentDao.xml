@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mufeng.dao.StudentDao">
+
+    <resultMap type="com.mufeng.entity.Student" id="StudentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="StudentMap">
+        select
+          id, name, mobile, course_id
+        from student
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StudentMap">
+        select
+          id, name, mobile, course_id
+        from student
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from student
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into student(name, mobile, course_id)
+        values (#{name}, #{mobile}, #{courseId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into student(name, mobile, course_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.name}, #{entity.mobile}, #{entity.courseId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into student(name, mobile, course_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.mobile}, #{entity.courseId})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        mobile = values(mobile),
+        course_id = values(course_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update student
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from student where id = #{id}
+    </delete>
+
+
+
+
+    <!--联合查询-->
+    <resultMap type="com.mufeng.entity.Student" id="StudentMap2">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+        <association property="course" javaType="com.mufeng.entity.Course">
+            <id property="courseId" column="course_id"/>
+            <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+            <result property="courseContent" column="course_content" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <select id="selectManyToOne1" resultMap="StudentMap2">
+        SELECT s.*,c.course_id courseId,course_name,course_content
+        FROM
+            student s
+                LEFT JOIN course c on s.course_id = c.course_id
+        where s.id=#{studentId}
+    </select>
+
+    <!--级联查询-->
+    <resultMap type="com.mufeng.entity.Student" id="StudentMap3">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+
+        <association property="course" javaType="com.mufeng.entity.Course"
+                     select="com.mufeng.dao.CourseDao.queryById" column="course_id"/>
+    </resultMap>
+
+    <!--第一步操作-->
+    <select id="queryById3" resultMap="StudentMap3">
+        select
+            id, name, mobile, course_id
+        from student
+        where id = #{id}
+    </select>
+</mapper>
+

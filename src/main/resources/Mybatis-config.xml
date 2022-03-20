@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--MyBatis配置文件的根标签-->
+<configuration>
+    <properties resource="jdbc.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 指定数据库类型 -->
+            <property name="helperDialect" value="mysql"/>
+        </plugin>
+    </plugins>
+    
+    <!--MyBatis设置别名（不推荐使用）-->
+<!--    <typeAliases>-->
+<!--        <typeAlias type="com.mufeng.entity.Student"/>-->
+<!--        &lt;!&ndash;自定义别名&ndash;&gt;-->
+<!--        <typeAlias type="com.mufeng.entity.Student" alias="xxx"/>-->
+
+<!--        &lt;!&ndash;通过包扫描来对包下所有的文件进行扫描，会出现乱码的问题&ndash;&gt;-->
+<!--        <package name="com.mufeng.entity"/>-->
+<!--    </typeAliases>-->
+    <!--用来设置MyBatis的多环境。default指定默认使用的环境，为必需！-->
+    <environments default="development">
+        <!--代表具体某一个环境的连接方式和相关配置（与事务相关）。id作为环境的唯一标识，为必需！-->
+        <environment id="development">
+            <!--
+                type：配置事务管理的方式。
+                    JDBC：代表直接使用JDBC的提交和回滚方式管理事务。
+                    MANAGED：从来不提交或者回滚事务。默认情况下会关闭数据库。阻止关闭数据库代码如下：
+                        <transactionManager type="MANAGED">
+                            <property name="closeConnection" value="false"/>
+                        </transactionManager>
+             -->
+            <transactionManager type="JDBC"/>
+            <!--数据源的配置
+                type：
+                  - POOLED：代表会使用MyBatis自己的数据库连接池管理数据源，避免重复重复连接会造成资源消耗。
+                  - UNPOOLED：直接连接，和JDBC一样，会频繁的开启关闭对数据源的连接。
+                  - JNDI：代表该数据源是配置在应用服务器或EJB，实现数据源在应用外部进行集中化管理
+            -->
+            <dataSource type="com.mufeng.mydatasource.DruidDataSourceFactory">
+                <!--不需要配置-->
+                <!--<property name="driverClassName" value="${jdbc.driverClassName}"/>-->
+                <property name="jdbcUrl" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--注册映射器-->
+    <mappers>
+        <mapper resource="mapper/studentDao.xml"/>
+        <mapper resource="mapper/courseDao.xml"/>
+<!--        <mapper resource="mapper/student2Dao.xml"/>-->
+<!--        <mapper resource="mapper/student3Dao.xml"/>-->
+<!--        <package name="com.mufeng.dao.StudentDao"/>-->
+    </mappers>
+
+
+</configuration>
